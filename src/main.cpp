@@ -35,7 +35,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0xce670c76f259df3760ddd955eecb2bdd3a3fcb9c98ddac33c4d94eec96454b02");
+uint256 hashGenesisBlock("0x03454bf05bd73a9dcddcdc43a2d81afb2481e3fbd1c3d43f70e6ecc8dc7ae46c");
 static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // Funcoin: starting difficulty is 1 / 2^12
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -945,7 +945,7 @@ int CMerkleTx::GetBlocksToMaturity() const
 {
     if (!IsCoinBase())
         return 0;
-    return max(0, (COINBASE_MATURITY+20) - GetDepthInMainChain());
+    return max(0, (COINBASE_MATURITY+5) - GetDepthInMainChain());
 }
 
 
@@ -1087,16 +1087,16 @@ uint256 static GetOrphanRoot(const CBlockHeader* pblock)
 
 int64 static GetBlockValue(int nHeight, int64 nFees)
 {
-    int64 nSubsidy = 20 * COIN;
+    int64 nSubsidy = 10 * COIN;
 
-    // Subsidy is cut in half every 840000 blocks, which will occur approximately every 4 years
-    nSubsidy >>= (nHeight / 10000); // Funcoin: 840k blocks in ~4 years
+    // Subsidy is cut in half every 10 000 blocks, which will occur approximately every 4 years
+    nSubsidy >>= (nHeight / 10); // Funcoin: 10 blocks in ~10 minutes
 
     return nSubsidy + nFees;
 }
 
-static const int64 nTargetTimespan = 1 * 24 * 60 * 60; // Funcoin: 3.5 days
-static const int64 nTargetSpacing = 5 * 60; // Funcoin: 2.5 minutes
+static const int64 nTargetTimespan = 0.007 * 24 * 60 * 60; // Funcoin: 3.5 days
+static const int64 nTargetSpacing = 2 * 60; // Funcoin: 2.5 minutes
 static const int64 nInterval = nTargetTimespan / nTargetSpacing;
 
 //
@@ -2784,7 +2784,7 @@ bool InitBlockIndex() {
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 486604799 << CBigNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-        txNew.vout[0].nValue = 20 * COIN;
+        txNew.vout[0].nValue = 10 * COIN;
         txNew.vout[0].scriptPubKey = CScript() << ParseHex("04d67f78ca51075ba965efe950ce4fac72a4a2f2109c0fd0f493418e7a877b8b1b51355fe1660ead9c05d9a7ff0dceba0d287b906ff78d059a7dd9f075a1283ef9") << OP_CHECKSIG;
         CBlock block;
         block.vtx.push_back(txNew);
@@ -2793,7 +2793,7 @@ bool InitBlockIndex() {
         block.nVersion = 1;
         block.nTime    = 1515165286;
         block.nBits    = 0x1e0ffff0;
-        block.nNonce   = 2084997152;
+        block.nNonce   = 2085850195;
 
         if (fTestNet)
         {
@@ -2850,7 +2850,7 @@ bool InitBlockIndex() {
         printf("%s\n", hash.ToString().c_str());
         printf("%s\n", hashGenesisBlock.ToString().c_str());
         printf("%s\n", block.hashMerkleRoot.ToString().c_str());
-        assert(block.hashMerkleRoot == uint256("0x9d1541374095c0b8c93880d4d456f376b267f42dc2ac0577fa14dd579931a292"));
+        assert(block.hashMerkleRoot == uint256("0x7e5cd2bc0f49e58a5587734366a558f78cecec6f9489fdafed3660dad53a3864"));
         block.print();
         assert(hash == hashGenesisBlock);
 
